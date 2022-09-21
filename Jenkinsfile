@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'TEST' } 
   environment {
-    registry = "yaroslade/flask"
+    registry = "yaroslade/smartthings"
     registryCredential = 'yaroslade-dockerhub'
     dockerImage = ''
   }
