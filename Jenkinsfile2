@@ -19,7 +19,7 @@ EOF
     '''
         }
     }
-    stage('Remove Unused docker image') {
+    stage('Remove Unused docker image. Deploy on Prod') {
         steps {
             sshagent(credentials: ['aws-key']) {
               sh "scp -o StrictHostKeyChecking=no script.sh ubuntu@${WEB_IP}:/tmp/script.sh"
