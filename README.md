@@ -1,6 +1,6 @@
 ## CI/CD Project using Docker
 
-### _Python Flask app_
+### _Python Flask application_
 
 
 > **Terraform:** building servers (AWS EC2) using Terraform (Infrastructure as code). Configuring them with the requirements needed for the project
