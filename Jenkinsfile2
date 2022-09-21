@@ -1,0 +1,46 @@
+pipeline {
+  agent  { label 'TEST' }
+  parameters {
+    string(name: "WEB_IP", defaultValue: "18.133.73.107", trim: false, description: "Web server IP")
+    string(name: "docherhub_repo", defaultValue: "smartthings", trim: false, description: "docherhub_repo")
+  }
+  stages {
+    stage('Create script') {
+        steps {
+    sh '''cat > script.sh << EOF
+#!/bin/bash
+                
+if [ "\\\$(docker ps -q -f name='${docherhub_repo}')" ]; then
+    docker stop ${docherhub_repo}
+    docker rm ${docherhub_repo}
+    docker image prune -a -f  #remove unusable images
+fi
+EOF
+    '''
+        }
+    }
+    stage('Remove Unused docker image') {
+        steps {
+            sshagent(credentials: ['aws-key']) {
+              sh "scp -o StrictHostKeyChecking=no script.sh ubuntu@${WEB_IP}:/tmp/script.sh"
+              sh "ssh -o StrictHostKeyChecking=no ubuntu@${WEB_IP} 'chmod +x /tmp/script.sh;/tmp/script.sh'"
+              
+              sleep 30
+              
+              script{
+                  docker.withRegistry( '', 'yaroslade-dockerhub' ) {
+                      sh """
+                            ssh -o StrictHostKeyChecking=no ubuntu@${WEB_IP} "docker run -d -it --name=${docherhub_repo} -p 80:5000 yaroslade/${docherhub_repo}:${fl_version}"
+                      """
+                  }
+              }
+            }
+        }
+      }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
