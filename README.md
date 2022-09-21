@@ -8,4 +8,4 @@
 
 > **AWS**
 
-![Image alt](https://github.com/YaroslavaDe/scheme/main/scheme.wiki.git)
+
